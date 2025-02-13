@@ -1,0 +1,4 @@
+<odoo>
+        <menuitem id="menu_loan_management" name="Loan Management" sequence="1"/>
+        <menuitem id="menu_loan_inquiry" name="Loan Inquiry" parent="menu_loan_management" sequence="2"/>
+</odoo>

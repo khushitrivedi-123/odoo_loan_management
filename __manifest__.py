@@ -8,10 +8,12 @@
     This module works for both 'Enterprise' and 'Community'.
     """,
     "license": "LGPL-3",
-    "depends": ["base"],
+    "depends": ["base","website"],
     "data": [
         "security/ir.model.access.csv",
-        "views/loan_views.xml",
+        "views/loan_menu.xml",
+        "views/inquiry_views.xml",
+        "views/inquiry_templates.xml",
     ],
     "installable": True,
     "application": True,

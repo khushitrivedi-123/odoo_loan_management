@@ -1,1 +1,1 @@
-from . import loan
+from . import inquiry

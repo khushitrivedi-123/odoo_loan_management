@@ -1,0 +1,47 @@
+<odoo>
+    <record id="view_loan_inquiry_form" model="ir.ui.view">
+        <field name="name">loan.inquiry.form</field>
+        <field name="model">loan.inquiry</field>
+        <field name="arch" type="xml">
+            <form string="Loan Inquiry">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="client_name"/>
+                            <field name="email"/>
+                            <field name="phone_number"/>
+                        </group>
+                        <group>
+                            <field name="gender"/>
+                            <field name="city"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_loan_inquiry_tree" model="ir.ui.view">
+        <field name="name">loan.inquiry.tree</field>
+        <field name="model">loan.inquiry</field>
+        <field name="arch" type="xml">
+            <tree string="Loan Inquiry">
+                <field name="client_name"/>
+                <field name="email"/>
+                <field name="phone_number"/>
+                <field name="gender"/>
+                <field name="city"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_loan_inquiry" model="ir.actions.act_window">
+        <field name="name">Loan Inquiries</field>
+        <field name="res_model">loan.inquiry</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_sm">Create and manage loan inquiries here.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_loan_inquiry_action" name="Loan Inquiries" parent="menu_loan_inquiry" action="action_loan_inquiry"/>
+</odoo>

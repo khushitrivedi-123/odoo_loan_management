@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="email_templates_loan_inquiry" model="mail.template">
+            <field name="name">Loan Inquiry Email</field>
+            <field name="model_id" ref="model_loan_inquiry"/>
+            <field name="subject">Loan Inquiry</field>
+            <field name="email_from">{{(user.email or 'support@yourcompany.com')}}</field>
+            <field name="email_to">{{ object.email }}</field>
+            <field name="body_html">
+
+            </field>
+        </record>
+    </data>
+</odoo>
