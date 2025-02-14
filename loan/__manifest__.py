@@ -10,11 +10,18 @@
     "license": "LGPL-3",
     "depends": ["base","website","mail"],
     "data": [
+        "security/loan_security.xml",
         "security/ir.model.access.csv",
-        "views/loan_menu.xml",
+
+        "data/ir_sequence_data.xml",
+        "data/templates_email.xml",
+
+        "views/loan_loan_views.xml",
+        "views/loan_menu_views.xml",
         "views/inquiry_views.xml",
         "views/inquiry_templates.xml",
-        "data/templates_email.xml",
+        "views/loan_menu_views.xml"
+
     ],
     "installable": True,
     "application": True,
