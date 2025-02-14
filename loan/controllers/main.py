@@ -16,6 +16,8 @@ class LoanInquiryController(http.Controller):
                 'phone_number': post.get('phone_number'),
                 'gender': post.get('gender'),
                 'city': post.get('city'),
+                'state': post.get('state'),
+                'pincode': post.get('pincode'),
             })
 
             template = request.env.ref('loan_management.email_template_loan_inquiry')
