@@ -10,4 +10,5 @@ class LoanInstallment(models.Model):
     amount_due = fields.Float("Amount Due")
     remaining_amount = fields.Float("Remaining Amount")
     payment_date = fields.Date("Payment Date")
+    amount_paid = fields.Float("Amount Paid")
     loan_id = fields.Many2one('loan.loan', 'Loan')

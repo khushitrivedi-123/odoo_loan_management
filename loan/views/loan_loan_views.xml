@@ -44,6 +44,8 @@
                        <group>
                            <separator string="Address Details" />
                            <field name="city"/>
+                           <field name="state"/>
+                           <field name="pin_code"/>
                        </group>
                    </group>
                    <group>
@@ -82,8 +84,11 @@
                             </group>
                    </group>
                     <notebook>
-                        <page string="Installment" name="installment" invisible="principle_entries == False">
+                        <page string="Installment" widget="section_and_note_one2many" mode="tree"  name="installment" invisible="principle_entries == False">
                             <field name="installment_ids" />
+<!--                            <tree>-->
+<!--                                <field name="amount_paid"/>-->
+<!--                            </tree>-->
                         </page>
                     </notebook>
                 </sheet>
@@ -105,6 +110,28 @@
             </tree>
         </field>
     </record>
+
+<!--    <record id="view_loan_installment_tree" model="ir.ui.view">-->
+<!--        <field name="name">loan.installment.tree</field>-->
+<!--        <field name="model">loan.installment</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <tree>-->
+<!--                <field name="loan_id"/>-->
+<!--                <field name="due_date"/>-->
+<!--                <field name="installment_amount"/>-->
+<!--                <field name="amount_paid"/>-->
+<!--                <field name="balance_amount"/>-->
+<!--                <field name="status"/>-->
+<!--            </tree>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    <record id="loan_installment_action" model="ir.actions.act_window">-->
+<!--        <field name="name">Loan Installments</field>-->
+<!--        <field name="res_model">loan.installment</field>-->
+<!--        <field name="view_mode">tree,form</field>-->
+<!--    </record>-->
+
 
     <!-- Action Code -->
     <record id="loan_loan_action" model="ir.actions.act_window">

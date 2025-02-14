@@ -10,12 +10,13 @@ class LoanLoan(models.Model):
     _name = "loan.loan"
     _description = "Loan"
 
-
     loan_id = fields.Char("Loan ID", requied=True, readonly=True)
     inquiry_id = fields.Many2one("loan.inquiry", "Name", required=True)
     email = fields.Char("Email", compute="_compute_email", required=True)
     mobile_no = fields.Char("Mobile No.", required=True)
     city = fields.Char("City", required=True)
+    state = fields.Char("State")
+    pin_code = fields.Char("Pin Code")
     status = fields.Selection(
         [("running", "Running"), ("closed", "Closed")],
         default="running",
@@ -30,6 +31,7 @@ class LoanLoan(models.Model):
     custom_payments = fields.Boolean("Custom Payments?")
     starting_date = fields.Date("Starting date",default=lambda *a: date.today(), required=True)
     closing_date = fields.Date("Closing Date", compute="_compute_closing_date", readonly=True)
+    date_applied = fields.Date("Date Applied", required=True)
     loan_description = fields.Char("Loan Description")
     principle_entries = fields.Boolean("Need Interest/Principle Entries?")
 
@@ -70,6 +72,7 @@ class LoanLoan(models.Model):
             record.email = record.inquiry_id.email
             record.city = record.inquiry_id.city
             record.mobile_no = record.inquiry_id.phone_number
+            record.date_applied = record.inquiry_id.create_date
 
 
     @api.depends("starting_date", "no_of_installments", "gap")
@@ -91,8 +94,13 @@ class LoanLoan(models.Model):
                 record.interest_amount = 0.0  # Default to zero if values are missing
 
     def action_compute_installments(self):
+
         for record in self:
-            record.computed_message = "Installments computed successfully!"
+            record.computed_message = "computed installment"
+        #     total_paid = sum(record.installment_ids.mapped('amount_paid'))
+        #     record.total_paid_amount = total_paid
+        #     record.total_outstanding_amount = record.installment_ids.remaining_amount
+        #     record.paid_percentage = (total_paid / record.loan_amount * 100) if record.loan_amount else 0
 
     def action_closed(self):
         for record in self:
