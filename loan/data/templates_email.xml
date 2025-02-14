@@ -11,20 +11,13 @@
                 <![CDATA[
                     <p>Dear <small t-esc="object.client_name"></small>,</p>
                     <p>Thank you for your loan inquiry! We have received your request and our team will contact you shortly.</p>
-                    <p>Here are the details you provided:</p>
-                    <ul>
-                        <li><strong>Name:</strong><small t-esc="object.client_name"></small> </li>
-                        <li><strong>Email:</strong> <small t-esc="object.email"></li>
-                        <li><strong>Phone:</strong> <small t-esc="object.phone_number"></li>
-                        <li><strong>City:</strong> <small t-esc="object.city"></li>
+                    <p> here’s some information about our loan services:</p>
+                     <ul>
+                        <li><strong>Personal Loan</strong> – Interest Rate: 10.5% per annum</li>
+                        <li><strong>Home Loan</strong> – Interest Rate: 8.2% per annum</li>
+                        <li><strong>Vehicle Loan</strong> – Interest Rate: 9.0% per annum</li>
                     </ul>
-                    <p>Meanwhile, here’s some information about our loan services:</p>
-                    <ul>
-                        <li>💰 Loan Amount: Up to $50,000</li>
-                        <li>📅 Tenure: 1 to 5 years</li>
-                        <li>💲 Interest Rate: As low as 5% per annum</li>
-                        <li>🚀 Fast Approval Process</li>
-                    </ul>
+
                     <p>If you have any questions, feel free to contact us.</p>
                     <p>Best Regards,</p>
                     <p>Your Loan Team</p>
