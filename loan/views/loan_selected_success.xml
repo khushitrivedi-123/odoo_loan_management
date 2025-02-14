@@ -1,0 +1,10 @@
+<odoo>
+    <template id="loan_selected_success" name="Loan Selection Success">
+        <t t-call="website.layout">
+            <div class="container">
+                <h2>Loan Selection Confirmed</h2>
+                <p>Thank you for selecting your loan type. Our team will contact you shortly with further details.</p>
+            </div>
+        </t>
+    </template>
+</odoo>
