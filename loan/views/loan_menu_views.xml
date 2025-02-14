@@ -11,8 +11,6 @@
 
     <menuitem id="loan_loan"
               name="Loans"
-              parent="loan_menu_root"
-              action="loan_loan_action"
-              groups="base.group_user"/>
+              parent="loan_menu_root"/>
 
 </odoo>

@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError
 class LoanInquiry(models.Model):
     _name = "loan.inquiry"
     _description = "Loan Inquiry"
+    _rec_name = "client_name"
 
     client_name = fields.Char(string="Client Name", required=True)
     email = fields.Char(string="Email", required=True)
