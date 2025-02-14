@@ -14,6 +14,8 @@
                         <group>
                             <field name="gender"/>
                             <field name="city"/>
+                             <field name="state"/>
+                            <field name="pincode"/>
                         </group>
                     </group>
                 </sheet>
@@ -30,6 +32,7 @@
                 <field name="phone_number"/>
                 <field name="gender"/>
                 <field name="city"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
