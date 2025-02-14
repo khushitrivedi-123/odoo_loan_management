@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="loan_loan_tree" model="ir.ui.view">
+            <field name="name">Loan Tree</field>
+            <field name="model">loan.loan</field>
+            <field name="arch" type="xml">
+                <tree string="loan_data">
+                    <field name="s_no"/>
+                    <field name="principle_amount"/>
+                    <field name="interest_amount"/>
+                    <field name="payment_date" />
+                </tree>
+            </field>
+    </record>
+</odoo>

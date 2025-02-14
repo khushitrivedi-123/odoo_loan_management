@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="loan_menu_root"
+              name="Loan Management"
+              sequence="1"/>
+
+    <menuitem id="menu_loan_inquiry"
+              name="Loan Inquiry"
+              parent="loan_menu_root"/>
+
+    <menuitem id="loan_loan"
+              name="Loans"
+              parent="loan_menu_root"
+              action="loan_loan_action"
+              groups="base.group_user"/>
+
+</odoo>
