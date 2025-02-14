@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="ir_sequence_loan_id" model="ir.sequence">
+            <field name="name">Loan Id Numbers</field>
+            <field name="code">loan.sequence.data</field>
+            <field name="prefix">LOAN/%(y)s/</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>

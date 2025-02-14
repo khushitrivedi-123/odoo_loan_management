@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="loan_loan_form" model="ir.ui.view">
+        <field name="name">Loan Form</field>
+        <field name="model">loan.loan</field>
+        <field name="arch" type="xml">
+            <form name="loan form">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="running,closed"/>
+                    <button name="action_submit" string="Submit" type="object" class="oe_highlight"
+                            invisible="status not in ['running']"/>
+                    <button name="action_compute_installments" string="Compute Installment" type="object"
+                            class="oe_highlight" invisible="status not in ['running']"/>
+                    <button name="action_closed" string="Close" status="running" type="object"
+                            invisible="status not in ['running']"/>
+                    <button name="action_running" string="Running" status="close" type="object"
+                            invisible="status not in ['closed']"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button string="documents" class="oe_stat_button" type="object"
+                                name="action_get_document" icon="fa-file-text-o">
+                        </button>
+                    </div>
+                        <div style="background-color: #d9edf7; padding: 10px; border-radius: 5px;
+                                    border: 1px solid #bce8f1; color: #31708f; font-weight: bold;
+                                    width: 100%; text-align: left; margin-bottom: 10px;">
+                            <field name="computed_message"/>
+                        </div>
+
+                   <div class="oe_title">
+                       <h1>
+                           <field name="loan_id" readonly="1"/>
+                       </h1>
+                   </div>
+
+                   <group>
+                       <group>
+                           <separator string="Contact Details" />
+                           <field name="name"/>
+                           <field name="email"/>
+                           <field name="mobile_no"/>
+                       </group>
+                       <group>
+                           <separator string="Address Details" />
+                           <field name="city"/>
+                       </group>
+                   </group>
+                   <group>
+                       <group>
+                           <separator string="Amount Details" />
+                           <field name="principle_amount"/>
+                           <field name="rate"/>
+                           <field name="interest_amount"/>
+                           <field name="loan_amount"/>
+                       </group>
+                       <group>
+                           <separator string="Installments Details" />
+                           <field name="no_of_installments"/>
+                           <field name="gap"/>
+                           <field name="custom_payments"/>
+                       </group>
+                   </group>
+                   <group>
+                            <group>
+                                 <separator string="Dates" />
+                                <field name="start_date"/>
+                                <field name="closing_date"/>
+                            </group>
+                            <group>
+                                <separator string="Other details"/>
+                                <field name="loan_description"/>
+                                <field name="principle_entries"/>
+                            </group>
+                   </group>
+                     <group>
+                            <group invisible="principle_entries == False">
+                                <separator string="Account Information"/>
+                                <field name="journal"/>
+                                <field name="asset_account"/>
+                                <field name="interest_account"/>
+                            </group>
+                   </group>
+                    <notebook>
+                        <page string="Installment" name="installment" invisible="principle_entries == False">
+                            <field name="installment_ids" />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+     <!-- Tree View Code -->
+    <record id="loan_loan_tree" model="ir.ui.view">
+        <field name="name">Loan Tree</field>
+        <field name="model">loan.loan</field>
+        <field name="arch" type="xml">
+            <tree string="loan_data">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="city"/>
+                <field name="status" widget="badge"
+                    decoration-success="status == 'running'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action Code -->
+    <record id="loan_loan_action" model="ir.actions.act_window">
+        <field name="name">Loan</field>
+        <field name="res_model">loan.loan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
