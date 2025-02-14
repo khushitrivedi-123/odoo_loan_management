@@ -1,0 +1,24 @@
+<odoo>
+    <template id="loan_type_selection" name="Loan Type Selection">
+        <t t-call="website.layout">
+            <div class="container">
+                <h2>Select Your Loan Type</h2>
+                <p>Please select the type of loan you are interested in:</p>
+                <form t-att-action="'/loan/select/%s/confirm' % inquiry_id" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <label>
+                        <input type="radio" name="loan_type" value="personal" /> Personal Loan (10.5% per annum)
+                    </label><br/>
+                    <label>
+                        <input type="radio" name="loan_type" value="home" /> Home Loan (8.2% per annum)
+                    </label><br/>
+                    <label>
+                        <input type="radio" name="loan_type" value="vehicle" /> Vehicle Loan (9.0% per annum)
+                    </label><br/>
+                    <br/>
+                    <button type="submit">Confirm Selection</button>
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>
