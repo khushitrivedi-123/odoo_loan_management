@@ -13,6 +13,8 @@ class LoanInquiry(models.Model):
     phone_number = fields.Char(string="Phone Number", required=True)
     gender = fields.Selection([("male", "Male"), ("female", "Female"), ("other", "Other")], string="Gender", required=True)
     city = fields.Selection([("ahmedabad","Ahmedabad"),("mumbai", "Mumbai"),("delhi", "Delhi")], string="City", required=True)
+    state = fields.Selection([("gujarat","Gujarat"),("maharashtra","Maharashtra"),("delhi", "Delhi")], string="State", required=True)
+    pincode = fields.Char(string="Pincode", required=True)
 
     @api.constrains("email")
     def _check_email_format(self):
@@ -29,3 +31,12 @@ class LoanInquiry(models.Model):
                 phone_regex = r"^\d{10}$"
                 if not re.match(phone_regex, client.phone_number):
                     raise ValidationError("Phone number must contain exactly 10 digits.")
+
+    @api.constrains("pincode")
+    def _check_pincode(self):
+        for client in self:
+            if client.pincode:
+                pincode_regex = r"^\d{6}$"  # Ensures exactly 6 digits
+                if not re.match(pincode_regex, client.pincode):
+                    raise ValidationError("Pincode must contain exactly 6 digits.")
+
