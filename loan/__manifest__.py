@@ -8,20 +8,19 @@
     This module works for both 'Enterprise' and 'Community'.
     """,
     "license": "LGPL-3",
-    "depends": ["base","website","mail"],
+    "depends": ["base","website","mail","account"],
     "data": [
-        "security/loan_security.xml",
         "security/ir.model.access.csv",
-
-        "data/ir_sequence_data.xml",
-        "data/templates_email.xml",
-
-        "views/loan_loan_views.xml",
-        "views/loan_menu_views.xml",
+        "views/loan_menu.xml",
         "views/inquiry_views.xml",
         "views/inquiry_templates.xml",
-        "views/loan_menu_views.xml"
-
+        "data/templates_email.xml",
+        "views/loan_type_selection.xml",
+        "views/loan_selected_success.xml",
+        "data/ir_sequence_data.xml",
+        "views/loan_loan_views.xml",
+        "views/loan_installment_views.xml",
+        "wizard/custom_payment_views.xml",
     ],
     "installable": True,
     "application": True,
