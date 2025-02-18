@@ -10,13 +10,14 @@ class LoanLoan(models.Model):
     _name = "loan.loan"
     _description = "Loan"
 
+
     loan_id = fields.Char("Loan ID", requied=True, readonly=True)
     inquiry_id = fields.Many2one("loan.inquiry", "Name", required=True)
     email = fields.Char("Email", compute="_compute_email", required=True)
     mobile_no = fields.Char("Mobile No.", required=True)
     city = fields.Char("City", required=True)
-    state = fields.Char("State")
-    pin_code = fields.Char("Pin Code")
+    state = fields.Selection([("gujarat","Gujarat"),("maharashtra","Maharashtra"),("delhi", "Delhi")], string="State", required=True)
+    pincode = fields.Char(string="Pincode", required=True)
     status = fields.Selection(
         [("running", "Running"), ("closed", "Closed")],
         default="running",
@@ -25,29 +26,25 @@ class LoanLoan(models.Model):
     principle_amount = fields.Float("Principle Amount", required=True)
     rate = fields.Float("Rate", required=True)
     interest_amount = fields.Float("Interest Amount", compute="_compute_interest_amount", required=True, readonly=True)
-    loan_amount = fields.Float("Loan Amount", required=True, readonly=True)
+    loan_amount = fields.Float("Loan Amount", required=False, readonly=True)
     no_of_installments = fields.Integer("No. of Installments",required=True)
     gap = fields.Integer("Gap (In months)")
     custom_payments = fields.Boolean("Custom Payments?")
     starting_date = fields.Date("Starting date",default=lambda *a: date.today(), required=True)
     closing_date = fields.Date("Closing Date", compute="_compute_closing_date", readonly=True)
-    date_applied = fields.Date("Date Applied", required=True)
     loan_description = fields.Char("Loan Description")
     principle_entries = fields.Boolean("Need Interest/Principle Entries?")
 
-    journal = fields.Char("Journal")
-    asset_account = fields.Char("Asset Account")
-    interest_account = fields.Char("Interest Account")
+    journal_id = fields.Many2one('account.journal', string="Journal")
+    asset_account_id = fields.Many2one('account.account', string="Asset Account (Current)")
+    interest_expense_account_id = fields.Many2one('account.account', string="Interest Account (Expense)")
+    interest_payable_account_id = fields.Many2one('account.account', string="Interest Account (Payable)")
 
-    installment_ids = fields.One2many("loan.installment", "loan_id", string="Child Installmemt")
+    installment_ids = fields.One2many('loan.installment', 'loan_id', string="Installments")
     computed_message = fields.Text(string="Info Message", default="Click on Compute Installments to create installment lines.", readonly= True)
 
-    @api.constrains("name", "mobile_no", "email")
+    @api.constrains("mobile_no", "email")
     def validate_constraints(self):
-        # Validate name
-        pattern_name = r"^[a-zA-Z ]{2,}$"
-        if not re.match(pattern_name, self.name):
-            raise ValidationError("Invalid name. Name should not contain numbers or special characters.")
 
         # Validate mobile number
         pattern_mobile = r"^\d{10}$"
@@ -61,9 +58,8 @@ class LoanLoan(models.Model):
 
     @api.model
     def create(self, vals):
-        vals["loan_id"] = (
-                self.env["ir.sequence"].sudo().next_by_code("loan.sequence.data") or "New"
-        )
+        if not vals.get("loan_id"):
+            vals["loan_id"] = self.env["ir.sequence"].next_by_code("loan.sequence.data") or "New"
         return super(LoanLoan, self).create(vals)
 
     @api.depends("inquiry_id")
@@ -72,8 +68,8 @@ class LoanLoan(models.Model):
             record.email = record.inquiry_id.email
             record.city = record.inquiry_id.city
             record.mobile_no = record.inquiry_id.phone_number
-            record.date_applied = record.inquiry_id.create_date
-
+            record.state = record.inquiry_id.state
+            record.pincode = record.inquiry_id.pincode
 
     @api.depends("starting_date", "no_of_installments", "gap")
     def _compute_closing_date(self):
@@ -93,14 +89,27 @@ class LoanLoan(models.Model):
             else:
                 record.interest_amount = 0.0  # Default to zero if values are missing
 
-    def action_compute_installments(self):
+    def action_custom_payment(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Custom Payment',
+            'res_model': 'custom.payment.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_loan_id': self.id},
+        }
 
+    def action_principle_entries(self):
+        # Your logic for Principle Entries
+        pass
+
+    def action_interest_entries(self):
+        # Your logic for Interest Entries
+        pass
+
+    def action_compute_installments(self):
         for record in self:
-            record.computed_message = "computed installment"
-        #     total_paid = sum(record.installment_ids.mapped('amount_paid'))
-        #     record.total_paid_amount = total_paid
-        #     record.total_outstanding_amount = record.installment_ids.remaining_amount
-        #     record.paid_percentage = (total_paid / record.loan_amount * 100) if record.loan_amount else 0
+            record.computed_message = "Installments computed successfully!"
 
     def action_closed(self):
         for record in self:
