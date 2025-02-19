@@ -4,6 +4,15 @@
         <field name="model">loan.inquiry</field>
         <field name="arch" type="xml">
             <form string="Loan Inquiry">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,approve,reject"/>
+                    <button name="action_approve" string="Approve" type="object" class="oe_highlight"
+                            invisible="status not in ['draft']"/>
+                    <button name="action_reject" string="Reject" type="object"
+                            invisible="status not in ['draft']"/>
+                    <button name="action_draft" string="Draft" status="close" type="object"
+                            invisible="status not in ['approve','reject']"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
