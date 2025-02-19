@@ -24,14 +24,12 @@ class LoanInstallment(models.Model):
 
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Loan Payment',
-            'res_model': 'loan.payment',
+            'name': 'Account Payment',
+            'res_model': 'account.payment',
             'view_mode': 'form',
-            'view_id': self.env.ref('your_module.view_loan_payment_form').id,
-            'target': 'new',
             'context': {
-                'default_partner_id': partner.id,
-                'default_installment_id': self.id,
+                'default_partner_id': self.loan_id.inquiry_id.partner_id.id,
                 'default_amount': self.remaining_amount,
+                'default_communication': f'Loan Installment {self.loan_id.inquiry_id}'
             }
         }
