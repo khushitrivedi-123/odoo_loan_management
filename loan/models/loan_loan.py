@@ -119,8 +119,30 @@ class LoanLoan(models.Model):
         for record in self:
             record.status = 'running'
 
-    def action_submit(self):
+        def action_submit(self):
         print("action submit")
+
+        self.env['loan.installment'].search([('loan_id', '=', self.id)]).unlink()  # Remove existing installments
+
+        principle_per_installment = self.principle_amount / self.no_of_installments
+        interest_per_installment = (self.principle_amount * self.rate / 100) / self.no_of_installments
+        total_per_installment = principle_per_installment + interest_per_installment
+        remaining_amount = self.loan_amount
+        current_due_date = self.starting_date
+
+        for i in range(1, self.no_of_installments + 1):
+            remaining_amount -= total_per_installment
+            self.env['loan.installment'].create({
+                'loan_id': self.id,
+                'sr_no': i,
+                'principle_amount': principle_per_installment,
+                'interest_amount': interest_per_installment,
+                'amount': total_per_installment,
+                'remaining_amount': remaining_amount,
+                'due_date': current_due_date,
+            })
+            current_due_date += timedelta(days=30 * self.gap)  # Move to next due date
+
 
     def action_get_document(self):
         print("print documents")
