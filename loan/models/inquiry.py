@@ -24,6 +24,9 @@ class LoanInquiry(models.Model):
         default="draft",
         tracking=True
     )
+    loan_amount = fields.Char(string="Loan Amount")
+    loan_duration = fields.Char(string="Duration")
+    gap = fields.Char(string="Gap")
 
     @api.constrains("email")
     def _check_email_format(self):
