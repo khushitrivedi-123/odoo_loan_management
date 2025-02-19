@@ -6,19 +6,44 @@
                 <p>Please select the type of loan you are interested in:</p>
                 <form t-att-action="'/loan/select/%s/confirm' % inquiry_id" method="post">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
                     <label>
-                        <input type="radio" name="loan_type" value="personal" /> Personal Loan (10.5% per annum)
+                        <input type="radio" name="loan_type" value="personal" class="loan_type_radio" /> Personal Loan (10.5% per annum)
                     </label><br/>
                     <label>
-                        <input type="radio" name="loan_type" value="home" /> Home Loan (8.2% per annum)
+                        <input type="radio" name="loan_type" value="home" class="loan_type_radio" /> Home Loan (8.2% per annum)
                     </label><br/>
                     <label>
-                        <input type="radio" name="loan_type" value="vehicle" /> Vehicle Loan (9.0% per annum)
-                    </label><br/>
-                    <br/>
+                        <input type="radio" name="loan_type" value="vehicle" class="loan_type_radio" /> Vehicle Loan (9.0% per annum)
+                    </label><br/><br/>
+
+                    <div id="loan_details" style="display: none;">
+                        <label for="loan_amount">Loan Amount:</label>
+                        <input type="number" id="loan_amount" name="loan_amount" placeholder="Enter loan amount" min="1000" /><br/><br/>
+
+                        <label for="loan_duration">Loan Duration (Years):</label>
+                        <input type="number" id="loan_duration" name="loan_duration" placeholder="Enter duration" min="1" /><br/><br/>
+
+                        <label for="gap">Gap (Months):</label>
+                        <input type="number" id="gap" name="gap" placeholder="Enter gap period" min="0" /><br/><br/>
+                    </div>
+
                     <button type="submit">Confirm Selection</button>
                 </form>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const loanTypeRadios = document.querySelectorAll(".loan_type_radio");
+                    const loanDetails = document.getElementById("loan_details");
+
+                    loanTypeRadios.forEach(radio => {
+                        radio.addEventListener("change", function () {
+                            loanDetails.style.display = "block";
+                        });
+                    });
+                });
+            </script>
         </t>
     </template>
 </odoo>
