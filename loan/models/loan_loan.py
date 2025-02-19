@@ -55,6 +55,10 @@ class LoanLoan(models.Model):
         pattern_email = r'^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$'
         if not re.match(pattern_email, self.email):
             raise ValidationError("Invalid email. Please enter a correct email address.")
+            
+        if self.no_of_installments <= 0:
+            raise ValidationError("Number of Installments must be greater than 0.")
+
 
     @api.model
     def create(self, vals):
