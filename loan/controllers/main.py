@@ -18,27 +18,39 @@ class LoanInquiryController(http.Controller):
                 'city': post.get('city'),
                 'state': post.get('state'),
                 'pincode': post.get('pincode'),
+                'loan_type' : post.get('loan_type'),
             })
 
             template = request.env.ref('loan_management.email_template_loan_inquiry')
             if template:
                 template.sudo().send_mail(inquiry.id, force_send=True)
-        return request.render("loan_management.inquiry_success", {})
-        
-     @http.route('/loan/select/<int:inquiry_id>', type='http', auth="public", website=True)
-     def select_loan_type_page(self, inquiry_id):
-         inquiry = request.env['loan.inquiry'].sudo().browse(inquiry_id)
-         if not inquiry.exists():
-             return request.render("website.404")
-            return request.render("loan_management.loan_type_selection", {'inquiry_id': inquiry_id})
 
-     @http.route('/loan/select/<int:inquiry_id>/confirm', type='http', auth="public", website=True)
-     def confirm_loan_type(self, inquiry_id, **post):
+        return request.render("loan_management.inquiry_success", {})
+
+    @http.route('/loan/select/<int:inquiry_id>', type='http', auth="public", website=True)
+    def select_loan_type_page(self, inquiry_id):
+        inquiry = request.env['loan.inquiry'].sudo().browse(inquiry_id)
+        if not inquiry.exists():
+            return request.render("website.404")
+
+        return request.render("loan_management.loan_type_selection", {'inquiry_id': inquiry_id})
+
+    @http.route('/loan/select/<int:inquiry_id>/confirm', type='http', auth="public", methods=['POST'], website=True, csrf=True)
+    def confirm_loan_type(self, inquiry_id, **post):
         loan_type = post.get('loan_type')
+        loan_amount = post.get('loan_amount')
+        loan_duration = post.get('loan_duration')
+        gap = post.get('gap')
+
         inquiry = request.env['loan.inquiry'].sudo().browse(inquiry_id)
 
         if inquiry.exists() and loan_type in ['personal', 'home', 'vehicle']:
-            inquiry.sudo().write({'loan_type': loan_type})
-            return request.render("loan_management.loan_selected_success", {})
+            inquiry.sudo().write({
+                'loan_type': loan_type,
+                'loan_amount': float(loan_amount) if loan_amount else 0.0,
+                'loan_duration': int(loan_duration) if loan_duration else 0,
+                'gap': int(gap) if gap else 0,
+            })
+            return request.render("loan_management.loan_selected_success", {'inquiry': inquiry})
 
         return request.render("website.404")
