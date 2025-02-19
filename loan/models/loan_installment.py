@@ -30,6 +30,7 @@ class LoanInstallment(models.Model):
             'context': {
                 'default_partner_id': self.loan_id.inquiry_id.partner_id.id,
                 'default_amount': self.remaining_amount,
-                'default_communication': f'Loan Installment {self.loan_id.inquiry_id}'
+                'default_loan_installment_id': self.id,
+                'default_installment_amount':self.amount
             }
         }
