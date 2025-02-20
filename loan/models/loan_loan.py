@@ -129,6 +129,10 @@ class LoanLoan(models.Model):
                    f"\nTotal Outstanding Amount: {total_outstanding} \nPaid percentage: {paid_percentage}")
             record.computed_message = msg
 
+    def action_draft(self):
+        for record in self:
+            record.status = 'draft'
+
     def action_closed(self):
         for record in self:
             record.status = 'closed'
