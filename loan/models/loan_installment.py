@@ -15,22 +15,34 @@ class LoanInstallment(models.Model):
     amount_paid = fields.Float(string="Amount Paid")
     payment_ref = fields.Char(string="Payment Ref")
     payment_date = fields.Date(string="Payment Date")
+    status = fields.Selection(
+            [("paid", "Paid"), ("unpaid", "Unpaid")],
+            default="unpaid"
+        )
 
     def action_open_payment_form(self):
-        partner = self.env['res.partner'].search([('customer_rank', '>', 0)], limit=1)
+        existing_payment = self.env['account.payment'].search([
+            ('ref', '=', self.payment_ref)
+        ], limit=1)
 
-        if not partner:
-            raise ValidationError("No valid customer found. Please create a customer first.")
-
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Account Payment',
-            'res_model': 'account.payment',
-            'view_mode': 'form',
-            'context': {
-                'default_partner_id': self.loan_id.inquiry_id.partner_id.id,
-                'default_amount': self.remaining_amount,
-                'default_loan_installment_id': self.id,
-                'default_installment_amount':self.amount
+        if self.status == 'paid':
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Account Payment',
+                'res_model': 'account.payment',
+                'res_id': existing_payment.id,
+                'view_mode': 'form',
             }
-        }
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Account Payment',
+                'res_model': 'account.payment',
+                'view_mode': 'form',
+                'context': {
+                    'default_partner_id': self.loan_id.inquiry_id.partner_id.id,
+                    'default_amount': self.amount,
+                    'default_loan_installment_id': self.id,
+                    'default_installment_amount':self.amount
+                }
+            }
