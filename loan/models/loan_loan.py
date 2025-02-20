@@ -1,6 +1,5 @@
 import re
-from datetime import date
-
+from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 from odoo import models, api, fields
 from odoo.exceptions import ValidationError
@@ -9,18 +8,18 @@ from odoo.exceptions import ValidationError
 class LoanLoan(models.Model):
     _name = "loan.loan"
     _description = "Loan"
-
+    _rec_name="loan_id"
 
     loan_id = fields.Char("Loan ID", requied=True, readonly=True)
-    inquiry_id = fields.Many2one("loan.inquiry", "Name", required=True)
+    inquiry_id = fields.Many2one("loan.inquiry", "Name", required=True, domain=[("status", "=", "approve")])
     email = fields.Char("Email", compute="_compute_email", required=True)
     mobile_no = fields.Char("Mobile No.", required=True)
     city = fields.Char("City", required=True)
     state = fields.Selection([("gujarat","Gujarat"),("maharashtra","Maharashtra"),("delhi", "Delhi")], string="State", required=True)
     pincode = fields.Char(string="Pincode", required=True)
     status = fields.Selection(
-        [("running", "Running"), ("closed", "Closed")],
-        default="running",
+        [("draft","Draft"),("running", "Running"), ("closed", "Closed")],
+        default="draft",
         tracking=True
     )
     principle_amount = fields.Float("Principle Amount", required=True)
@@ -28,7 +27,7 @@ class LoanLoan(models.Model):
     interest_amount = fields.Float("Interest Amount", compute="_compute_interest_amount", required=True, readonly=True)
     loan_amount = fields.Float("Loan Amount", required=False, readonly=True)
     no_of_installments = fields.Integer("No. of Installments",required=True)
-    gap = fields.Integer("Gap (In months)")
+    gap = fields.Integer("Gap (In months)", default=1)
     custom_payments = fields.Boolean("Custom Payments?")
     starting_date = fields.Date("Starting date",default=lambda *a: date.today(), required=True)
     closing_date = fields.Date("Closing Date", compute="_compute_closing_date", readonly=True)
@@ -43,7 +42,7 @@ class LoanLoan(models.Model):
     installment_ids = fields.One2many('loan.installment', 'loan_id', string="Installments")
     computed_message = fields.Text(string="Info Message", default="Click on Compute Installments to create installment lines.", readonly= True)
 
-    @api.constrains("mobile_no", "email")
+    @api.constrains("mobile_no", "email", "no_of_installments")
     def validate_constraints(self):
 
         # Validate mobile number
@@ -55,10 +54,10 @@ class LoanLoan(models.Model):
         pattern_email = r'^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$'
         if not re.match(pattern_email, self.email):
             raise ValidationError("Invalid email. Please enter a correct email address.")
-            
+
+        #Validate installment number
         if self.no_of_installments <= 0:
             raise ValidationError("Number of Installments must be greater than 0.")
-
 
     @api.model
     def create(self, vals):
@@ -80,7 +79,7 @@ class LoanLoan(models.Model):
         for record in self:
             if record.starting_date and record.no_of_installments and record.gap:
                 record.closing_date = record.starting_date + relativedelta(
-                    months=(record.no_of_installments * record.gap)+1)
+                    months=record.no_of_installments * record.gap)
             else:
                 record.closing_date = False
 
@@ -94,39 +93,51 @@ class LoanLoan(models.Model):
                 record.interest_amount = 0.0  # Default to zero if values are missing
 
     def action_custom_payment(self):
+        partner = self.env['res.partner'].search([('customer_rank', '>', 0)], limit=1)
+
+        if not partner:
+            raise ValidationError("No valid customer found. Please create a customer first.")
+
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Custom Payment',
-            'res_model': 'custom.payment.wizard',
+            'name': 'Account Payment',
+            'res_model': 'account.payment',
             'view_mode': 'form',
-            'target': 'new',
-            'context': {'default_loan_id': self.id},
+            'context': {
+                'default_partner_id': self.inquiry_id.partner_id.id,
+            }
         }
 
     def action_principle_entries(self):
-        # Your logic for Principle Entries
         pass
 
     def action_interest_entries(self):
-        # Your logic for Interest Entries
         pass
 
     def action_compute_installments(self):
         for record in self:
-            record.computed_message = "Installments computed successfully!"
+            total_paid = sum(self.env['loan.installment'].search([
+                ('loan_id', '=', record.id),
+                ('status', '=', 'paid')
+            ]).mapped('amount_paid'))
+
+            total_outstanding = record.loan_amount - total_paid
+
+            paid_percentage = (total_paid / record.loan_amount) * 100
+
+            msg = (f"Total Paid Amount: {total_paid} out of Total Loan Amount:{record.loan_amount}"
+                   f"\nTotal Outstanding Amount: {total_outstanding} \nPaid percentage: {paid_percentage}")
+            record.computed_message = msg
 
     def action_closed(self):
         for record in self:
             record.status = 'closed'
 
-    def action_running(self):
+    def action_submit(self):
         for record in self:
             record.status = 'running'
 
-        def action_submit(self):
-        print("action submit")
-
-        self.env['loan.installment'].search([('loan_id', '=', self.id)]).unlink()  # Remove existing installments
+        self.env['loan.installment'].search([('loan_id', '=', self.id)]).unlink()
 
         principle_per_installment = self.principle_amount / self.no_of_installments
         interest_per_installment = (self.principle_amount * self.rate / 100) / self.no_of_installments
@@ -145,8 +156,7 @@ class LoanLoan(models.Model):
                 'remaining_amount': remaining_amount,
                 'due_date': current_due_date,
             })
-            current_due_date += timedelta(days=30 * self.gap)  # Move to next due date
-
+            current_due_date += relativedelta(months=self.gap)
 
     def action_get_document(self):
         print("print documents")
